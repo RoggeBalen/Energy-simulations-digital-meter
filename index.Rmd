@@ -1,9 +1,10 @@
 ---
 title: "Energie simulaties voor digitale meter"
-author: "Jonas Meijerink"
-output: 
+output:
   flexdashboard::flex_dashboard:
-    orientation: rows
+    orientation: columns
+    vertical_layout: scroll
+    css: styles.css
 ---
 
 
@@ -22,6 +23,7 @@ library(ggplot2)
 library(plotly)
 library(plyr)
 library(flexdashboard)
+library(DT)
 
 
 ### Load functions
@@ -30,28 +32,103 @@ source("~/Energy-simulations-digital-meter/src/energycost/energy_cost_ecopower.R
 source("~/Energy-simulations-digital-meter/src/energyviz/Function_viz_afname_inname.R")
 source("~/Energy-simulations-digital-meter/src/batterysim/Home_battery_simulation.R")
 source("~/Energy-simulations-digital-meter/src/dataformat/Change_data_format.R")
+```
 
+
+# Algemene informatie
+
+###
+
+Dit dashboard is ontworpen om **energieprijzen** en **batterijcapaciteiten** te vergelijken. 
+Het helpt bij het evalueren van:
+
+- **Tarieven** van verschillende energieleveranciers
+- **Opslagcapaciteit** van batterijen en hun impact op kostenbesparing
+- **Optimalisatie van verbruik** op basis van dynamische prijsmodellen
+
+
+---
+
+
+Hoe dit dashboard te gebruiken?
+
+- item 1
+- item 2
+
+
+---
+
+
+**Laatste update:** `r Sys.Date()`
+
+
+- Versie 1.0 - 31/12/2025:Test versie met dummy data.
+
+
+
+# Roggestraat {data-navmenu="Data visualisatie"}
+
+###
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
 ### Load data
 #------------
-Test_31122025 <- read.csv2("~/Energy-simulations-digital-meter/data/Test_31122025.csv")
-```
-
-# Introductie {.sidebar}
-
-# Berekening
+Test_31122025_rogge <- read.csv2("~/Energy-simulations-digital-meter/data/Test_31122025.csv")
 
 
-## Column 2
-
-### Inferno colors
-
-```{r}
-df <- Change_data_format(Test_31122025 , tz = "Europe/Brussels")
-df$production <- df$production 
+### Change format
+#----------------
+df_rogge <- Change_data_format(Test_31122025_rogge , tz = "Europe/Brussels")
 ```
 
 
+**Historische data - Roggestraat**
+
+---
+
+Voordat we starten met de simulaties, bekijken we eerst de historische gegevens die als basis dienen voor onze analyses. De data is afkomstig van **Fluvius digitale meters** en heeft een **resolutie van 15 minuten** (kwartierwaarden). Deze dataset bevat gedetailleerde informatie over het **energieverbruik** en **injectie** op huishoudniveau. De data loopt van `r min(df_rogge$start_time)` tot `r max(df_rogge$end_time)`, en vormt het referentiepunt voor het vergelijken van toekomstige scenario’s.
+
+
+### 
+
+**Verbruik en injectie per kwartier**
+
+---
+
 ```{r}
+plot_week_switch(df_rogge)
+```
+
+###
+
+De bovenstaande grafiek toont de **tijd** (x-as) ten opzichte van **verbruik** (y-as) en **injectie** (y-as). Je kunt er interactief mee spelen:
+
+- **Zoomen**  
+  - Scroll met je muis om in of uit te zoomen.  
+  - Klik en sleep om een specifiek gebied te selecteren.  
+  - Dubbelklik om terug te keren naar de oorspronkelijke schaal.
+
+- **Hover voor details**  
+  - Beweeg je muis over de lijnen om exacte waarden (tijd en kWh) te zien.
+
+- **Legenda gebruiken**  
+  - Klik op een item in de legenda om die lijn te verbergen of weer te tonen.  
+  - Dubbelklik op een item om alleen die lijn te tonen.
+
+- **Knoppen voor tijdsperiode**  
+  - Gebruik de knoppen bovenaan om snel een periode te kiezen:  
+    `Laatste 3 maanden`, `Laatste maand`, `Laatste week`, of `Alles`.
+
+
+# Roggestraat {data-navmenu="Simulaties"}
+
+
+###
+
+some text
+```{r eval=FALSE, include=FALSE}
+### Do the calculations
+#----------------------
 out <- rbind(
   simulate_battery(df, batt_cap = 0, tarief = "vast", energie_kost = energy_cost_ecopower),
   simulate_battery(df, batt_cap = 5, tarief = "vast", energie_kost = energy_cost_ecopower),
@@ -59,21 +136,26 @@ out <- rbind(
   simulate_battery(df, batt_cap = 15, tarief = "vast", energie_kost = energy_cost_ecopower),
   simulate_battery(df, batt_cap = 20, tarief = "vast", energie_kost = energy_cost_ecopower)
              )
-```
 
 
-
-```{r}
-ggplot(out , aes(Timestamp , Kost_Euro, color = Cap)) +
+### Make the plot
+#----------------
+p <- ggplot(out , aes(Timestamp , Kost_Euro, color = Cap)) +
   geom_line() + 
   theme_minimal()
+ggplotly(p)
 ```
 
+###
 
-# Daily production overview
+some text
 
 
-```{r echo=FALSE, message=FALSE, warning=FALSE}
-#plot_prod_vs_cons(Test_20122025, smooth = TRUE)
-```
+
+
+
+
+
+
+
 

@@ -16,16 +16,9 @@
   })
   
   
-  ### Keep only interval kWh rows and non-NA volume
-  #------------------------------------------------
-  df1 <- df %>%
-    filter(Eenheid %in% c("kWh", "KWH"),
-           !is.na(Volume))
-  
-  
   ### Dates are dmy ("19-12-2025"), times as hms ("00:15:00")
   #----------------------------------------------------------
-  df1 <- df1 %>%
+  df1 <- df %>%
     mutate(
       start_ts = force_tz(dmy(Van..datum.) + hms(Van..tijdstip.), tz = tz),
       end_ts   = force_tz(dmy(Tot..datum.) + hms(Tot..tijdstip.), tz = tz)
@@ -38,8 +31,8 @@
     mutate(
       register_clean = str_squish(Register),
       type = case_when(
-        str_detect(register_clean, regex("^Afname", ignore_case = TRUE)) ~ "consumption",
-        str_detect(register_clean, regex("^Injectie", ignore_case = TRUE)) ~ "production",
+        str_detect(register_clean, regex("^Afname", ignore_case = TRUE)) ~ "Verbruik",
+        str_detect(register_clean, regex("^Injectie", ignore_case = TRUE)) ~ "Injectie",
         TRUE ~ "other"
       ),
       period = case_when(
@@ -48,21 +41,28 @@
         TRUE ~ "Onbekend"
       )
     ) %>%
-    filter(type %in% c("consumption", "production"))
-  
-  
-  ### Aggregate to single row per interval & type (safety if duplicates exist)
-  #---------------------------------------------------------------------------
-  df_aggr <- df1 %>%
-    group_by(start_ts, type) %>%
-    summarise(energy_kWh = sum(Volume, na.rm = TRUE), .groups = "drop")
+    filter(type %in% c("Verbruik", "Injectie"))
   
   
   ### Wide format + derived series
   #-------------------------------
-  df_wide <- df_aggr %>%
-    pivot_wider(names_from = type, values_from = energy_kWh, values_fill = 0) %>%
-    arrange(start_ts) 
+  df_wide <- df1 %>% select(start_ts, end_ts, Van..datum., Van..tijdstip., 
+                            Tot..datum.,Tot..tijdstip., type, Volume) %>%
+    pivot_wider(id_cols    = c(start_ts, end_ts, `Van..datum.`, `Van..tijdstip.`, `Tot..datum.`, `Tot..tijdstip.`),
+                names_from = type, values_from = Volume, values_fill = 0) %>%
+    arrange(start_ts) %>%  
+  distinct() %>% 
+  dplyr::rename(
+    start_time    = start_ts,
+    end_time      = end_ts,
+    start_date    = `Van..datum.`,
+    start_clock   = `Van..tijdstip.`,
+    end_date      = `Tot..datum.`,
+    end_clock     = `Tot..tijdstip.`, 
+    Verbruik = Verbruik,
+    Injectie = Injectie
+  )
+  
   
   return(df_wide)
 }

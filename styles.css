@@ -1,0 +1,51 @@
+
+body {
+  font-size: 16px; /* standaard tekst */
+}
+
+
+/* Maak alle koppen groter */
+h1, h2, h3 {
+  font-size: 2em; /* pas aan naar wens */
+}
+
+/* Specifiek voor jouw titel */
+.section.level3 h3 {
+  font-size: 2em; /* bv. voor ### headings */
+}
+
+
+/* Donkerblauwe professionele navbar (licht thema) */
+.navbar, .navbar-default, .navbar-inverse {
+  background-color: #1E293B !important;   /* Navy/ink */
+  border-color: #1E293B !important;
+}
+
+/* Tekst, links en merknaam in de navbar */
+.navbar .navbar-brand,
+.navbar .nav > li > a,
+.navbar .navbar-nav > li > a,
+.navbar .navbar-text,
+.navbar a {
+  color: #FFFFFF !important;
+}
+
+/* Hover/focus voor links */
+.navbar .nav > li > a:hover,
+.navbar .nav > li > a:focus {
+  color: #E2E8F0 !important;              /* subtle lichtgrijs */
+  background-color: transparent !important;
+}
+
+/* Actieve item-indicator */
+.navbar .nav > li.active > a,
+.navbar .nav > li > a:active {
+  color: #FFFFFF !important;
+  background-color: #1E293B !important;   /* donkerder blauwgrijs */
+}
+
+/* Rand/onderlijn subtiel */
+.navbar {
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
