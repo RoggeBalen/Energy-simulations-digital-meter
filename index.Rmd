@@ -44,9 +44,9 @@ source("~/Energy-simulations-digital-meter/src/dataformat/Change_data_format.R")
 Dit dashboard is ontworpen om **energieprijzen** en **batterijcapaciteiten** te vergelijken. <br>
 Dit helpt bij het evalueren van:
 
-- **Tarieven** van verschillende energieleveranciers
-- **Opslagcapaciteit** van batterijen en hun impact op kostenbesparing
-- **Optimalisatie van verbruik** op basis van dynamische prijsmodellen
+- Tarieven van verschillende energieleveranciers
+- Opslagcapaciteit van batterijen en hun impact op kostenbesparing
+- Optimalisatie van verbruik op basis van dynamische prijsmodellen
 
 
 ---
@@ -54,8 +54,9 @@ Dit helpt bij het evalueren van:
 
 Hoe dit dashboard te gebruiken?
 
-- item 1
-- item 2
+- De tab `Data visualisatie` visualiseert historische data op basis van de digitale meter.
+- De tab `Simulatie` bevat simulaties van de mogelijke kostprijs onder verschillende scenarios. <br>
+Deze worden bepaald door het type tarief en eventueel het type batterij.
 
 
 ---
@@ -128,7 +129,11 @@ De bovenstaande grafiek toont de **tijd** (x-as) ten opzichte van **verbruik** (
 
 # Uitleg {data-navmenu="Simulaties"}
 
+###
 
+**Redenering achter de simulatie studie**
+
+---
 
 **1) Context en doel**
 

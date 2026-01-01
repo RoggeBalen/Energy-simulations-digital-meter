@@ -40,12 +40,20 @@ h1, h2, h3 {
 /* Actieve item-indicator */
 .navbar .nav > li.active > a,
 .navbar .nav > li > a:active {
-  color: #FFFFFF !important;
-  background-color: #1E293B !important;   /* donkerder blauwgrijs */
+  color: ##1E293B ;
+  background-color: #1E293B;   /* donkerder blauwgrijs */
 }
+
+/* Standaard donkere tekst in dropdowns */
+.navbar .dropdown-menu a,
+.navbar .dropdown-menu .dropdown-item {
+  color: #111 !important;
+}
+
 
 /* Rand/onderlijn subtiel */
 .navbar {
   box-shadow: 0 2px 6px #FFFFFF;
 }
+
 

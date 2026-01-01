@@ -98,7 +98,7 @@ plot_week_switch_batt_cap <- function(df, tz_display = "Europe/Brussels") {
       ),
       yaxis = list(title = "Batterij capaciteit (kWh)"),
       yaxis2 = list(
-        title      = "Kost (€)",
+        title      = "Verbruik/Injectie (kWh)",
         overlaying = "y",
         side       = "right",
         showgrid   = FALSE
