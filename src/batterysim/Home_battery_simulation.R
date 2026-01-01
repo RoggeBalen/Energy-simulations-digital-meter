@@ -5,11 +5,11 @@
 ################################################################################
 
 
-simulate_battery <- function(data, batt_cap, tarief, energie_kost) {
+simulate_battery <- function(data, batt_cap = 0, tarief = "vast", energie_kost = energy_cost_ecopower) {
   # data: dataframe 
-  # batt_cap:
-  # tarief: "vast" of "variabel"
-  # energie_kost: functie ....
+  # batt_cap: 0,5,10 kWh
+  # tarief: "vast" of "variabel" of "dynamisch"
+  # energie_kost: 
   
   
   n <- nrow(data)
@@ -21,7 +21,7 @@ simulate_battery <- function(data, batt_cap, tarief, energie_kost) {
     
     ### Define the difference
     #------------------------
-    diff <- data$consumption[i] - data$production[i]
+    diff <- data$Verbruik[i] - data$Injectie[i]
     
     
     ### Meer verbuik dan productie
@@ -47,7 +47,7 @@ simulate_battery <- function(data, batt_cap, tarief, energie_kost) {
       ### Definieer de kost voor net energie
       #-------------------------------------
       if (remaining > 0) {
-        kost[i + 1] <- kost[i] + energie_kost(remaining, data$start_ts[i], tarief)
+        kost[i + 1] <- kost[i] + energie_kost(remaining, data$start_time[i], tarief)
       }
       else{
         kost[i+1] <- kost[i]
@@ -84,7 +84,7 @@ simulate_battery <- function(data, batt_cap, tarief, energie_kost) {
       ### Optional sell surplus back to net
       #------------------------------------
       if (remaining > 0) {
-        kost[i+1] <- kost[i] + energie_kost(-remaining, data$start_ts[i], tarief) # Klopt deze functie???
+        kost[i+1] <- kost[i] + energie_kost(-remaining, data$start_time[i], tarief) # Klopt deze functie???
       }
       else{
         kost[i+1] <- kost[i]
@@ -95,12 +95,13 @@ simulate_battery <- function(data, batt_cap, tarief, energie_kost) {
   
   return(
     tibble(
-    Timestamp = data$start_ts,
-    Productie = data$production,
-    Verbuik = data$consumption,
+    start_time = data$start_time,
+    Verbruik = data$Verbruik,
+    Injectie = data$Injectie,
     Batt_kWh = Batt,
     Batt_diff_kWh = c(NA, diff(Batt)),
-    Kost_Euro = kost,
-    Cap = factor(batt_cap)
+    Kostprijs = kost,
+    Type = factor(batt_cap),
+    Tarief = tarief
   ))
 }

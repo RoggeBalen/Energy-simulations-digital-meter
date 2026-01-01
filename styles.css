@@ -33,7 +33,7 @@ h1, h2, h3 {
 /* Hover/focus voor links */
 .navbar .nav > li > a:hover,
 .navbar .nav > li > a:focus {
-  color: #E2E8F0 !important;              /* subtle lichtgrijs */
+  color: #FFFFFF !important;              /* subtle lichtgrijs */
   background-color: transparent !important;
 }
 
@@ -46,6 +46,6 @@ h1, h2, h3 {
 
 /* Rand/onderlijn subtiel */
 .navbar {
-  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  box-shadow: 0 2px 6px #FFFFFF;
 }
 

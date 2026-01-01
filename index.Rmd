@@ -30,6 +30,8 @@ library(DT)
 #-----------------
 source("~/Energy-simulations-digital-meter/src/energycost/energy_cost_ecopower.R")
 source("~/Energy-simulations-digital-meter/src/energyviz/Function_viz_afname_inname.R")
+source("~/Energy-simulations-digital-meter/src/energyviz/Function_viz_kostprijs.R")
+source("~/Energy-simulations-digital-meter/src/energyviz/Function_viz_batt_cap.R")
 source("~/Energy-simulations-digital-meter/src/batterysim/Home_battery_simulation.R")
 source("~/Energy-simulations-digital-meter/src/dataformat/Change_data_format.R")
 ```
@@ -39,8 +41,8 @@ source("~/Energy-simulations-digital-meter/src/dataformat/Change_data_format.R")
 
 ###
 
-Dit dashboard is ontworpen om **energieprijzen** en **batterijcapaciteiten** te vergelijken. 
-Het helpt bij het evalueren van:
+Dit dashboard is ontworpen om **energieprijzen** en **batterijcapaciteiten** te vergelijken. <br>
+Dit helpt bij het evalueren van:
 
 - **Tarieven** van verschillende energieleveranciers
 - **Opslagcapaciteit** van batterijen en hun impact op kostenbesparing
@@ -62,7 +64,7 @@ Hoe dit dashboard te gebruiken?
 **Laatste update:** `r Sys.Date()`
 
 
-- Versie 1.0 - 31/12/2025:Test versie met dummy data.
+- Versie 1.0 &nbsp; &nbsp; - &nbsp;&nbsp;31/12/2025:&nbsp;&nbsp; Test versie met dummy data.
 
 
 
@@ -120,37 +122,109 @@ De bovenstaande grafiek toont de **tijd** (x-as) ten opzichte van **verbruik** (
     `Laatste 3 maanden`, `Laatste maand`, `Laatste week`, of `Alles`.
 
 
+
+
+
+
+# Uitleg {data-navmenu="Simulaties"}
+
+
+
+**1) Context en doel**
+
+Deze berekening vormt de basis van de simulaties. <br>
+Het doel is om de energiekost per tijdsinterval te bepalen, rekening houdend met:
+
+- Netto-afname van het net
+- Tariefstructuur (bv. vast, variabel of dinamisch tarief)
+- Eventuele batterijlogica (laden/ontladen)
+
+
+**2) Formule per tijdsinterval**
+
+De energiekost wordt berekend met:
+
+\[
+\text{Kostprijs}_{t} = \big(\text{Verbruik}_{t} - \text{Injectie}_{t}\big) \times \text{Tarief}_{t}
+\]
+
+Definities:
+
+- \(\text{Verbruik}_{t}\):&nbsp; &nbsp; elektriciteit afgenomen van het net (kWh).
+- \(\text{Injectie}_{t}\):&nbsp; &nbsp; elektriciteit teruggeleverd aan het net (kWh).
+- \(\text{Tarief}_{t}\):&nbsp; &nbsp; prijs per kWh (€, bv. Vast tarief). 
+
+
+
+**3) Netto-effect en tekens**
+
+- Verbruik > Injectie &nbsp; &nbsp; → &nbsp; &nbsp; positieve kost (netto afname).
+- Injectie > Verbruik &nbsp; &nbsp; → &nbsp; &nbsp; negatieve kost (credit).
+- Gelijk &nbsp; &nbsp; → &nbsp; &nbsp; kost = 0.
+
+
+
+**4) Batterijlogica**
+
+De batterij beïnvloedt de netto-afname:
+
+- Laden bij overschot &nbsp; &nbsp; → &nbsp; &nbsp; minder injectie naar het net.
+- Ontladen bij tekort &nbsp; &nbsp; → &nbsp; &nbsp; minder verbruik van het net.
+
+
+**5) Totale kost over een periode**
+
+Sommeer alle intervalkosten:
+
+\[
+\text{Totale kost} = \sum_{t \in \text{periode}} \text{Kostprijs}_{t}
+\]
+
+
+**6) Aannames**
+
+- Intervalduur: &nbsp; &nbsp; 15 minuten.
+- Tarief: &nbsp; &nbsp; lineair per kWh (geen vaste kosten).
+- Negatieve kost bij injectie = credit.
+- Batterijrendement niet gemodelleerd.
+
+
+
 # Roggestraat {data-navmenu="Simulaties"}
 
+### 
 
-###
+**Evolutie van energiekosten per batterijconfiguratie**
+ 
+---
 
-some text
-```{r eval=FALSE, include=FALSE}
+```{r}
 ### Do the calculations
 #----------------------
 out <- rbind(
-  simulate_battery(df, batt_cap = 0, tarief = "vast", energie_kost = energy_cost_ecopower),
-  simulate_battery(df, batt_cap = 5, tarief = "vast", energie_kost = energy_cost_ecopower),
-  simulate_battery(df, batt_cap = 10, tarief = "vast", energie_kost = energy_cost_ecopower),
-  simulate_battery(df, batt_cap = 15, tarief = "vast", energie_kost = energy_cost_ecopower),
-  simulate_battery(df, batt_cap = 20, tarief = "vast", energie_kost = energy_cost_ecopower)
+  simulate_battery(df_rogge, batt_cap = 0, tarief = "vast", energie_kost = energy_cost_ecopower),
+  simulate_battery(df_rogge, batt_cap = 5, tarief = "vast", energie_kost = energy_cost_ecopower),
+  simulate_battery(df_rogge, batt_cap = 7.5, tarief = "vast", energie_kost = energy_cost_ecopower),
+  simulate_battery(df_rogge, batt_cap = 10, tarief = "vast", energie_kost = energy_cost_ecopower)
              )
 
 
 ### Make the plot
 #----------------
-p <- ggplot(out , aes(Timestamp , Kost_Euro, color = Cap)) +
-  geom_line() + 
-  theme_minimal()
-ggplotly(p)
+plot_week_switch_batt(out , tz_display = "Europe/Brussels")
 ```
+
+
 
 ###
 
-some text
+**Batterij capaciteit**
 
-
+```{r}
+### Make the plot
+#----------------
+plot_week_switch_batt_cap(out , tz_display = "Europe/Brussels")
+```
 
 
 
