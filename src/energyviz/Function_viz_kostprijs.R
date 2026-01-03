@@ -102,6 +102,15 @@ plot_week_switch_batt <- function(df, tz_display = "Europe/Brussels") {
       )
     })
     
+    
+    # Bepaal aantal traces en verberg vanaf trace 3
+    n_tr <- length(plotly_build(p)$x$data)
+    visible_traces <- c(2,4)                  # eerste 2 zichtbaar
+    hidden_traces  <- setdiff(seq_len(n_tr), visible_traces)
+    
+    p <- p %>% style(visible = "legendonly", traces = hidden_traces)
+    
+    
     p %>% layout(
       updatemenus = list(
         list(
