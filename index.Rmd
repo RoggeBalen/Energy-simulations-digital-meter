@@ -69,7 +69,7 @@ Deze worden bepaald door het type tarief en eventueel het type batterij.
 
 
 
-# Roggestraat {data-navmenu="Data visualisatie"}
+# Rogge {data-navmenu="Data visualisatie"}
 
 ###
 
@@ -123,14 +123,65 @@ De bovenstaande grafiek toont de **tijd** (x-as) ten opzichte van **verbruik** (
     `Laatste 3 maanden`, `Laatste maand`, `Laatste week`, of `Alles`.
 
 
+# Leo {data-navmenu="Data visualisatie"}
+
+###
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+### Load data
+#------------
+Leo <- read.csv2("~/Energy-simulations-digital-meter/data/Leo_03012026.csv")
+
+
+### Change format
+#----------------
+df_leo <- Change_data_format(Leo , tz = "Europe/Brussels")
+```
+
+
+**Historische data - Leo**
+
+---
+
+Voordat we starten met de simulaties, bekijken we eerst de historische gegevens die als basis dienen voor onze analyses. De data is afkomstig van **Fluvius digitale meters** en heeft een **resolutie van 15 minuten** (kwartierwaarden). Deze dataset bevat gedetailleerde informatie over het **energieverbruik** en **injectie** op huishoudniveau. De data loopt van `r min(df_leo$start_time)` tot `r max(df_leo$end_time)`, en vormt het referentiepunt voor het vergelijken van toekomstige scenario’s.
+
+
+### 
+
+**Verbruik en injectie per kwartier**
+
+---
+
+```{r}
+plot_week_switch(df_leo)
+```
+
+###
+
+De bovenstaande grafiek toont de **tijd** (x-as) ten opzichte van **verbruik** (y-as) en **injectie** (y-as). Je kunt er interactief mee spelen:
+
+- **Zoomen**  
+  - Scroll met je muis om in of uit te zoomen.  
+  - Klik en sleep om een specifiek gebied te selecteren.  
+  - Dubbelklik om terug te keren naar de oorspronkelijke schaal.
+
+- **Hover voor details**  
+  - Beweeg je muis over de lijnen om exacte waarden (tijd en kWh) te zien.
+
+- **Legenda gebruiken**  
+  - Klik op een item in de legenda om die lijn te verbergen of weer te tonen.  
+  - Dubbelklik op een item om alleen die lijn te tonen.
+
+- **Knoppen voor tijdsperiode**  
+  - Gebruik de knoppen bovenaan om snel een periode te kiezen:  
+    `Laatste 3 maanden`, `Laatste maand`, `Laatste week`, of `Alles`.
 
 
 
 
 
 
-
-# Roggestraat {data-navmenu="Simulaties"}
+# Rogge {data-navmenu="Simulaties"}
 
 ### 
 
@@ -142,10 +193,10 @@ De bovenstaande grafiek toont de **tijd** (x-as) ten opzichte van **verbruik** (
 ### Do the calculations
 #----------------------
 out <- rbind(
-  simulate_battery(df_rogge, batt_cap = 0, tarief = "vast", energie_kost = energy_cost_ecopower),
-  simulate_battery(df_rogge, batt_cap = 5, tarief = "vast", energie_kost = energy_cost_ecopower),
-  simulate_battery(df_rogge, batt_cap = 7.5, tarief = "vast", energie_kost = energy_cost_ecopower),
-  simulate_battery(df_rogge, batt_cap = 10, tarief = "vast", energie_kost = energy_cost_ecopower)
+  simulate_battery(df_rogge, batt_cap = 0, tarief = "Vast tarief ecopower Kempen", energie_kost = energy_cost_ecopower),
+  simulate_battery(df_rogge, batt_cap = 5, tarief = "Vast tarief ecopower Kempen", energie_kost = energy_cost_ecopower),
+  simulate_battery(df_rogge, batt_cap = 7.5, tarief = "Vast tarief ecopower Kempen", energie_kost = energy_cost_ecopower),
+  simulate_battery(df_rogge, batt_cap = 10, tarief = "Vast tarief ecopower Kempen", energie_kost = energy_cost_ecopower)
              )
 
 
@@ -167,6 +218,41 @@ plot_week_switch_batt_cap(out , tz_display = "Europe/Brussels")
 ```
 
 
+# Leo {data-navmenu="Simulaties"}
+
+### 
+
+**Evolutie van energiekosten per batterijconfiguratie**
+ 
+---
+
+```{r}
+### Do the calculations
+#----------------------
+out_leo <- rbind(
+  simulate_battery(df_leo, batt_cap = 0, tarief = "Vast tarief ecopower Kempen", energie_kost = energy_cost_ecopower),
+  simulate_battery(df_leo, batt_cap = 5, tarief = "Vast tarief ecopower Kempen", energie_kost = energy_cost_ecopower),
+  simulate_battery(df_leo, batt_cap = 7.5, tarief = "Vast tarief ecopower Kempen", energie_kost = energy_cost_ecopower),
+  simulate_battery(df_leo, batt_cap = 10, tarief = "Vast tarief ecopower Kempen", energie_kost = energy_cost_ecopower)
+             )
+
+
+### Make the plot
+#----------------
+plot_week_switch_batt(out_leo , tz_display = "Europe/Brussels")
+```
+
+
+
+###
+
+**Batterij capaciteit**
+
+```{r}
+### Make the plot
+#----------------
+plot_week_switch_batt_cap(out_leo , tz_display = "Europe/Brussels")
+```
 
 
 
