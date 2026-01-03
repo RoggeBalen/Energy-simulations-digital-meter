@@ -49,7 +49,10 @@
   df_wide <- df1 %>% select(start_ts, end_ts, Van..datum., Van..tijdstip., 
                             Tot..datum.,Tot..tijdstip., type, Volume) %>%
     pivot_wider(id_cols    = c(start_ts, end_ts, `Van..datum.`, `Van..tijdstip.`, `Tot..datum.`, `Tot..tijdstip.`),
-                names_from = type, values_from = Volume, values_fill = 0) %>%
+                names_from = type, 
+                values_from = Volume, 
+                values_fill = 0,
+                values_fn   = list(Volume = sum)) %>%
     arrange(start_ts) %>%  
   distinct() %>% 
   dplyr::rename(

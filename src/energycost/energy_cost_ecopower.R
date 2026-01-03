@@ -5,25 +5,29 @@
 ################################################################################
 
 
-energy_cost_ecopower <- function(verbruik , tijd , tarief){
+energy_cost_ecopower <- function(kWH , tijd , tarief = "Vast tarief ecopower Kempen"){
+  # kWH: verbruik of injectie
+  # Tijd: tijdstip van verbruik of injectie
+  # Tarief: type tarief voor kostenberekening
   
   
   ### Vast tarief ecopower
   #-----------------------
-  if(tarief == "vast"){
+  if(tarief == "Vast tarief ecopower Kempen"){
     
     
     ### Verbruik
     #-----------
-    if(verbruik > 0){
-      output = 0.1187 * verbruik
+    if(kWH > 0){
+      output = (0.1286 + 0.011 + 0.00392 + 17.51/365/24/4 + 0.0607412 
+                + 0.0019261 + 0.04748) * kWH
     }
     
     
     ### Injectie
     #-----------
-    if(verbruik <= 0){
-      output = 0.02 * verbruik
+    if(kWH <= 0){
+      output = 0.02 * kWH
     }
   }
   
