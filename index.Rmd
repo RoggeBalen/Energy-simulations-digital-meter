@@ -127,71 +127,6 @@ De bovenstaande grafiek toont de **tijd** (x-as) ten opzichte van **verbruik** (
 
 
 
-# Uitleg {data-navmenu="Simulaties"}
-
-###
-
-**Redenering achter de simulatie studie**
-
----
-
-**1) Context en doel**
-
-Deze berekening vormt de basis van de simulaties. <br>
-Het doel is om de energiekost per tijdsinterval te bepalen, rekening houdend met:
-
-- Netto-afname van het net
-- Tariefstructuur (bv. vast, variabel of dinamisch tarief)
-- Eventuele batterijlogica (laden/ontladen)
-
-
-**2) Formule per tijdsinterval**
-
-De energiekost wordt berekend met:
-
-\[
-\text{Kostprijs}_{t} = \big(\text{Verbruik}_{t} - \text{Injectie}_{t}\big) \times \text{Tarief}_{t}
-\]
-
-Definities:
-
-- \(\text{Verbruik}_{t}\):&nbsp; &nbsp; elektriciteit afgenomen van het net (kWh).
-- \(\text{Injectie}_{t}\):&nbsp; &nbsp; elektriciteit teruggeleverd aan het net (kWh).
-- \(\text{Tarief}_{t}\):&nbsp; &nbsp; prijs per kWh (€, bv. Vast tarief). 
-
-
-
-**3) Netto-effect en tekens**
-
-- Verbruik > Injectie &nbsp; &nbsp; → &nbsp; &nbsp; positieve kost (netto afname).
-- Injectie > Verbruik &nbsp; &nbsp; → &nbsp; &nbsp; negatieve kost (credit).
-- Gelijk &nbsp; &nbsp; → &nbsp; &nbsp; kost = 0.
-
-
-
-**4) Batterijlogica**
-
-De batterij beïnvloedt de netto-afname:
-
-- Laden bij overschot &nbsp; &nbsp; → &nbsp; &nbsp; minder injectie naar het net.
-- Ontladen bij tekort &nbsp; &nbsp; → &nbsp; &nbsp; minder verbruik van het net.
-
-
-**5) Totale kost over een periode**
-
-Sommeer alle intervalkosten:
-
-\[
-\text{Totale kost} = \sum_{t \in \text{periode}} \text{Kostprijs}_{t}
-\]
-
-
-**6) Aannames**
-
-- Intervalduur: &nbsp; &nbsp; 15 minuten.
-- Tarief: &nbsp; &nbsp; lineair per kWh (geen vaste kosten).
-- Negatieve kost bij injectie = credit.
-- Batterijrendement niet gemodelleerd.
 
 
 
@@ -234,6 +169,91 @@ plot_week_switch_batt_cap(out , tz_display = "Europe/Brussels")
 
 
 
+
+
+
+
+# Uitleg simulaties
+
+###
+
+**Redenering achter de simulatie studie**
+
+---
+
+**1) Context en doel**
+
+Deze berekening vormt de basis van de simulaties. <br>
+Het doel is om de energiekost per tijdsinterval te bepalen, rekening houdend met:
+
+- Netto-afname van het net
+- Tariefstructuur (bv. vast, variabel of dinamisch tarief)
+- Injectie via zonnepanelen
+- Eventuele batterijlogica (laden/ontladen)
+
+
+**2) Netto-effect en tekens**
+
+- Verbruik > Injectie &nbsp; &nbsp; → &nbsp; &nbsp; positieve kost (netto afname).
+- Injectie > Verbruik &nbsp; &nbsp; → &nbsp; &nbsp; negatieve kost (credit).
+- Gelijk &nbsp; &nbsp; → &nbsp; &nbsp; kost = 0.
+
+
+**3) Formule per tijdsinterval**
+
+De energiekost wordt berekend met:
+
+\[
+\text{Kostprijs}_{t} = \big(\text{Verbruik}_{t} - \text{Injectie}_{t}\big) \times \text{Tarief}_{t}
+\]
+
+Definities:
+
+- \(\text{Verbruik}_{t}\):&nbsp; &nbsp; elektriciteit afgenomen van het net (kWh).
+- \(\text{Injectie}_{t}\):&nbsp; &nbsp; elektriciteit teruggeleverd aan het net (kWh).
+- \(\text{Tarief}_{t}\):&nbsp; &nbsp; prijs per kWh (€, bv. Vast tarief). 
+
+Zie hieronder de desbetreffende functie die gebruikt wordt voor de berekeningen.
+
+```{r}
+code <- readLines("~/Energy-simulations-digital-meter/src/energycost/energy_cost_ecopower.R")
+knitr::asis_output(paste0("```r\n", paste(code, collapse = "\n"), "\n```"))
+```
+
+
+
+**4) Batterijlogica**
+
+De batterij beïnvloedt de netto-afname:
+
+- Laden bij overschot &nbsp; &nbsp; → &nbsp; &nbsp; minder injectie naar het net.
+- Ontladen bij tekort &nbsp; &nbsp; → &nbsp; &nbsp; minder verbruik van het net.
+
+
+Hieronder is de functie gegeven om de invloed van een batterij mee in rekening te nemen.
+
+```{r}
+code <- readLines("~/Energy-simulations-digital-meter/src/batterysim/Home_battery_simulation.R")
+knitr::asis_output(paste0("```r\n", paste(code, collapse = "\n"), "\n```"))
+```
+
+
+
+**5) Totale kost over een periode**
+
+Sommeer alle intervalkosten:
+
+\[
+\text{Totale kost} = \sum_{t \in \text{periode}} \text{Kostprijs}_{t}
+\]
+
+
+**6) Aannames**
+
+- Intervalduur: &nbsp; 15 minuten.
+- Tarief: &nbsp; lineair per kWh (geen vaste kosten).
+- Negatieve kost bij injectie = credit.
+- Batterijrendement niet gemodelleerd.
 
 
 
