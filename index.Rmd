@@ -192,17 +192,18 @@ De bovenstaande grafiek toont de **tijd** (x-as) ten opzichte van **verbruik** (
 ```{r}
 ### Do the calculations
 #----------------------
-out <- rbind(
-  simulate_battery(df_rogge, batt_cap = 0, tarief = "Vast tarief ecopower Kempen", energie_kost = energy_cost_ecopower),
+out_rogge <- rbind(
+  simulate_battery(df_rogge, batt_cap = 1, tarief = "Vast tarief ecopower Kempen", energie_kost = energy_cost_ecopower),
+  simulate_battery(df_rogge, batt_cap = 1, tarief = "Vast tarief ecopower Kempen", energie_kost = energy_cost_ecopower),
+  simulate_battery(df_rogge, batt_cap = 3, tarief = "Vast tarief ecopower Kempen", energie_kost = energy_cost_ecopower),
   simulate_battery(df_rogge, batt_cap = 5, tarief = "Vast tarief ecopower Kempen", energie_kost = energy_cost_ecopower),
-  simulate_battery(df_rogge, batt_cap = 7.5, tarief = "Vast tarief ecopower Kempen", energie_kost = energy_cost_ecopower),
   simulate_battery(df_rogge, batt_cap = 10, tarief = "Vast tarief ecopower Kempen", energie_kost = energy_cost_ecopower)
              )
 
 
 ### Make the plot
 #----------------
-plot_week_switch_batt(out , tz_display = "Europe/Brussels")
+plot_week_switch_batt(out_rogge , tz_display = "Europe/Brussels")
 ```
 
 
@@ -214,7 +215,8 @@ plot_week_switch_batt(out , tz_display = "Europe/Brussels")
 ```{r}
 ### Make the plot
 #----------------
-plot_week_switch_batt_cap(out , tz_display = "Europe/Brussels")
+out_rogge_subset <- out_rogge %>% filter(Type != 0)
+plot_week_switch_batt_cap(out_rogge_subset , tz_display = "Europe/Brussels")
 ```
 
 
@@ -231,8 +233,9 @@ plot_week_switch_batt_cap(out , tz_display = "Europe/Brussels")
 #----------------------
 out_leo <- rbind(
   simulate_battery(df_leo, batt_cap = 0, tarief = "Vast tarief ecopower Kempen", energie_kost = energy_cost_ecopower),
+  simulate_battery(df_leo, batt_cap = 1, tarief = "Vast tarief ecopower Kempen", energie_kost = energy_cost_ecopower),
+  simulate_battery(df_leo, batt_cap = 3, tarief = "Vast tarief ecopower Kempen", energie_kost = energy_cost_ecopower),
   simulate_battery(df_leo, batt_cap = 5, tarief = "Vast tarief ecopower Kempen", energie_kost = energy_cost_ecopower),
-  simulate_battery(df_leo, batt_cap = 7.5, tarief = "Vast tarief ecopower Kempen", energie_kost = energy_cost_ecopower),
   simulate_battery(df_leo, batt_cap = 10, tarief = "Vast tarief ecopower Kempen", energie_kost = energy_cost_ecopower)
              )
 
@@ -251,7 +254,8 @@ plot_week_switch_batt(out_leo , tz_display = "Europe/Brussels")
 ```{r}
 ### Make the plot
 #----------------
-plot_week_switch_batt_cap(out_leo , tz_display = "Europe/Brussels")
+out_leo_subset <- out_leo  %>% filter(Type != 0)
+plot_week_switch_batt_cap(out_leo_subset , tz_display = "Europe/Brussels")
 ```
 
 
