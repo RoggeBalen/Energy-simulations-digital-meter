@@ -16,6 +16,9 @@ simulate_battery <- function(data, batt_cap = 0, tarief = "vast", energie_kost =
   Batt <- numeric(n)
   Batt_diff <- numeric(n)
   kost <- numeric(n)
+  remaining_verbruik <- numeric(n)
+  remaining_injectie <- numeric(n)
+  
   
   for (i in 1:(n - 1)) {
     
@@ -52,13 +55,13 @@ simulate_battery <- function(data, batt_cap = 0, tarief = "vast", energie_kost =
       
       ### Overige energie die van het net komt
       #---------------------------------------
-      remaining <- data$Verbruik[i] - used_from_batt    # 0 of >0
+      remaining_verbruik[i+1] <- data$Verbruik[i] - used_from_batt    # 0 of >0
       
       
       ### Definieer de kost voor net energie
       #-------------------------------------
-      if (remaining > 0) {
-        delta_cost <- delta_cost + energie_kost(remaining, data$start_time[i], tarief)
+      if (remaining_verbruik[i+1] > 0) {
+        delta_cost <- delta_cost + energie_kost(remaining_verbruik[i+1], data$start_time[i], tarief)
       }
     }
     
@@ -81,13 +84,13 @@ simulate_battery <- function(data, batt_cap = 0, tarief = "vast", energie_kost =
       
       ### Overge energie
       #-----------------
-      remaining <- data$Injectie[i] - stored
+      remaining_injectie[i+1] <- data$Injectie[i] - stored
       
       
       ### Optie verkoop overige energie aan het net (negatieve kost)
       #-------------------------------------------------------------
-      if (remaining > 0) {
-        delta_cost <- delta_cost + energie_kost(-remaining, data$start_time[i], tarief)
+      if (remaining_injectie[i+1] > 0) {
+        delta_cost <- delta_cost + energie_kost(-remaining_injectie[i+1], data$start_time[i], tarief)
       }
     }
     
@@ -99,8 +102,8 @@ simulate_battery <- function(data, batt_cap = 0, tarief = "vast", energie_kost =
   return(
     tibble(
     start_time = data$start_time,
-    Verbruik = data$Verbruik,
-    Injectie = data$Injectie,
+    Verbruik = remaining_verbruik,
+    Injectie = remaining_injectie,
     Batt_kWh = Batt,
     Batt_diff_kWh = c(NA, diff(Batt)),
     Kostprijs = kost,
