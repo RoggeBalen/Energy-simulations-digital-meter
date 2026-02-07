@@ -33,7 +33,7 @@ plot_week_switch <- function(df , tz_display = "Europe/Brussels") {
     add_lines(y = ~ Verbruik,
               name = "Verbruik (kWh)",
               line = list(color = "#1f77b4", width = 2),
-              hovertemplate = "Tijd: %{x}<br>Productie: %{y:.3f} kWh<extra></extra>") %>%
+              hovertemplate = "Tijd: %{x}<br>Verbruik: %{y:.3f} kWh<extra></extra>") %>%
     add_lines(y = ~ Injectie,
               name = "Injectie (kWh)",
               line = list(color = "#ff7f0e", width = 2, dash = "dot"),
