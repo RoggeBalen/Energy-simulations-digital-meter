@@ -35,16 +35,19 @@ plot_week_switch_batt <- function(df, tz_display = "Europe/Brussels") {
     #-------------------------------------------------
     kost_colors <- c(
       "Geen batterij"      = "#2ca02c",
-      "Batterij (5kWh)"    = "#d62728",
-      "Batterij (7.5kWh)"  = "#9467bd",
+      "Batterij (1kWh)"    = "#d62728",
+      "Batterij (3kWh)"    = "#b12168",
+      "Batterij (5kWh)"    = "#9467bd",
       "Batterij (10kWh)"   = "#7f7f7f"
     )
     type_map <- c(
       "0"  = "Geen batterij",
+      "1"  = "Batterij (1kWh)",
+      "3"  = "Batterij (3kWh)",
       "5"  = "Batterij (5kWh)",
-      "7.5" = "Batterij (7.5kWh)",
       "10" = "Batterij (10kWh)"
     )
+    
     
     df <- df %>%
       mutate(
