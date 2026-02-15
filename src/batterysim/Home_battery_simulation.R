@@ -61,7 +61,7 @@ simulate_battery <- function(data, batt_cap = 0, tarief = "vast", energie_kost =
       ### Definieer de kost voor net energie
       #-------------------------------------
       if (remaining_verbruik[i+1] > 0) {
-        delta_cost <- delta_cost + energie_kost(remaining_verbruik[i+1], data$start_time[i], tarief)
+        delta_cost <- delta_cost + energie_kost(remaining_verbruik[i+1], data$start_clock[i], tarief, data$start_time[i])
       }
     }
     
@@ -90,7 +90,7 @@ simulate_battery <- function(data, batt_cap = 0, tarief = "vast", energie_kost =
       ### Optie verkoop overige energie aan het net (negatieve kost)
       #-------------------------------------------------------------
       if (remaining_injectie[i+1] > 0) {
-        delta_cost <- delta_cost + energie_kost(-remaining_injectie[i+1], data$start_time[i], tarief)
+        delta_cost <- delta_cost + energie_kost(-remaining_injectie[i+1], data$start_clock[i], tarief, data$start_time[i])
       }
     }
     
