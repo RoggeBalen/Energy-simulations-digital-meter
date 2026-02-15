@@ -24,6 +24,7 @@ library(plotly)
 library(plyr)
 library(flexdashboard)
 library(DT)
+library(data.table)
 
 
 ### Load functions
@@ -76,12 +77,13 @@ Deze worden bepaald door het type tarief en eventueel het type batterij.
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 ### Load data
 #------------
-Test_31122025_rogge <- read.csv2("~/Energy-simulations-digital-meter/data/Test_31122025.csv")
+rogge <- read.csv2("~/Energy-simulations-digital-meter/data/Rogge_14022026.csv")
+rogge <- na.omit(rogge)
 
 
 ### Change format
 #----------------
-df_rogge <- Change_data_format(Test_31122025_rogge , tz = "Europe/Brussels")
+df_rogge <- Change_data_format(rogge , tz = "Europe/Brussels")
 ```
 
 
@@ -193,8 +195,10 @@ De bovenstaande grafiek toont de **tijd** (x-as) ten opzichte van **verbruik** (
 ### Do the calculations
 #----------------------
 out_rogge <- rbind(
+  simulate_battery(df_rogge, batt_cap = 0, tarief = "Vast tarief ecopower Kempen", energie_kost = energy_cost_ecopower),
+  simulate_battery(df_rogge, batt_cap = 0, tarief = "Variabel tarief ecopower Kempen", energie_kost = energy_cost_ecopower),
   simulate_battery(df_rogge, batt_cap = 1, tarief = "Vast tarief ecopower Kempen", energie_kost = energy_cost_ecopower),
-  simulate_battery(df_rogge, batt_cap = 1, tarief = "Vast tarief ecopower Kempen", energie_kost = energy_cost_ecopower),
+  simulate_battery(df_rogge, batt_cap = 1, tarief = "Variabel tarief ecopower Kempen", energie_kost = energy_cost_ecopower),
   simulate_battery(df_rogge, batt_cap = 3, tarief = "Vast tarief ecopower Kempen", energie_kost = energy_cost_ecopower),
   simulate_battery(df_rogge, batt_cap = 5, tarief = "Vast tarief ecopower Kempen", energie_kost = energy_cost_ecopower),
   simulate_battery(df_rogge, batt_cap = 10, tarief = "Vast tarief ecopower Kempen", energie_kost = energy_cost_ecopower)
@@ -233,7 +237,9 @@ plot_week_switch_batt_cap(out_rogge_subset , tz_display = "Europe/Brussels")
 #----------------------
 out_leo <- rbind(
   simulate_battery(df_leo, batt_cap = 0, tarief = "Vast tarief ecopower Kempen", energie_kost = energy_cost_ecopower),
+  simulate_battery(df_leo, batt_cap = 0, tarief = "Variabel tarief ecopower Kempen", energie_kost = energy_cost_ecopower),
   simulate_battery(df_leo, batt_cap = 1, tarief = "Vast tarief ecopower Kempen", energie_kost = energy_cost_ecopower),
+  simulate_battery(df_leo, batt_cap = 1, tarief = "Variabel tarief ecopower Kempen", energie_kost = energy_cost_ecopower),
   simulate_battery(df_leo, batt_cap = 3, tarief = "Vast tarief ecopower Kempen", energie_kost = energy_cost_ecopower),
   simulate_battery(df_leo, batt_cap = 5, tarief = "Vast tarief ecopower Kempen", energie_kost = energy_cost_ecopower),
   simulate_battery(df_leo, batt_cap = 10, tarief = "Vast tarief ecopower Kempen", energie_kost = energy_cost_ecopower)
