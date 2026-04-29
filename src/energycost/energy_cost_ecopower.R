@@ -5,9 +5,14 @@
 ################################################################################
 
 
-EPEXDAM_all <- data.frame(waarde = c(65.33, 83.07, 68.98, 63.60, 75.15, 86.19, 85.35 , 108.52, 108.52),
-                      maand = c(6, 7, 8, 9, 10, 11, 12, 1, 2),
-                      jaar = c(2025, 2025, 2025, 2025, 2025, 2025, 2025, 2026, 2026))
+EPEXDAM_all <- data.frame(waarde = c(65.33, 83.07, 68.98, 63.60, 75.15, 86.19, 85.35 , 108.52, 108.52, 108.52),
+                          maand = c(6, 7, 8, 9, 10, 11, 12, 1, 2, 3),
+                          jaar = c(2025, 2025, 2025, 2025, 2025, 2025, 2025, 2026, 2026, 3))
+
+Prijs_all <- data.frame(waarde = c(0.1188, 0.1276, 0.1204, 0.1187, 0.1241, 0.1289, 0.1268, 0.1405, 0.1287, 0.1338),
+                        maand  = c(6, 7, 8, 9, 10, 11, 12, 1, 2, 3),
+                        jaar   = c(2025, 2025, 2025, 2025, 2025, 2025, 2025, 2026, 2026, 2026))
+
 
 
 energy_cost_ecopower <- function(kWH , 
@@ -24,11 +29,16 @@ energy_cost_ecopower <- function(kWH ,
   if(tarief == "Vast tarief ecopower Kempen"){
     
     
+    ### Filter on montly main contributer
+    #------------------------------------
+    Prijs <- Prijs_all %>% filter(maand == month(date) & jaar == year(date))%>% select(waarde)
+    
+    
     ### Verbruik
     #-----------
     if(kWH > 0){
-      output = (0.1286 + 0.011 + 0.00392 + 17.51/365/24/4 + 0.0607412 
-                + 0.0019261 + 0.04748) * kWH
+      output = (Prijs + 0.011 + 0.00392 + 17.51/365/24/4 + 0.0607412 
+                + 0.0019261 + 0.04748) * kWH * 1.06
     }
     
     
@@ -63,27 +73,27 @@ energy_cost_ecopower <- function(kWH ,
         ### Check time
         #-------------
         if (as.ITime("00:00:00") < as.ITime(tijd) & as.ITime(tijd) < as.ITime("01:00:00")){ 
-          output = (2.1872+(0.1056 * EPEXDAM)) * kWH / 100       
+          output = (2.1872+(0.1056 * EPEXDAM)) * kWH / 100 * 1.06    
         } else if (as.ITime("01:00:00") <= as.ITime(tijd) & as.ITime(tijd) < as.ITime("07:00:00")){ 
-          output = (1.2572+(0.0826*EPEXDAM)) * kWH / 100
+          output = (1.2572+(0.0826*EPEXDAM)) * kWH / 100 * 1.06  
         } else if (as.ITime("07:00:00") <= as.ITime(tijd) & as.ITime(tijd) < as.ITime("11:00:00")){ 
-          output = (2.9372+(0.1429*EPEXDAM)) * kWH / 100
+          output = (2.9372+(0.1429*EPEXDAM)) * kWH / 100 * 1.06  
         } else if (as.ITime("11:00:00") <= as.ITime(tijd) & as.ITime(tijd) < as.ITime("17:00:00")){ 
-          output = (2.1872+(0.1056*EPEXDAM)) * kWH / 100
+          output = (2.1872+(0.1056*EPEXDAM)) * kWH / 100 * 1.06  
         } else if (as.ITime("17:00:00") <= as.ITime(tijd) & as.ITime(tijd) < as.ITime("22:00:00")){ 
-          output = (2.9372+(0.1429*EPEXDAM)) * kWH / 100
-        }else { output = (2.1872+(0.1056*EPEXDAM)) * kWH / 100
+          output = (2.9372+(0.1429*EPEXDAM)) * kWH / 100 * 1.06  
+        }else { output = (2.1872+(0.1056*EPEXDAM)) * kWH / 100 * 1.06  
         } 
       }else {
         if (as.ITime("00:00:00") <= as.ITime(tijd) & as.ITime(tijd)<as.ITime("01:00:00")){ 
-          output = (2.1872+(0.1056 * EPEXDAM)) * kWH / 100       
+          output = (2.1872+(0.1056 * EPEXDAM)) * kWH / 100 * 1.06      
         } else if (as.ITime("01:00:00") <= as.ITime(tijd) & as.ITime(tijd) < as.ITime("07:00:00")){ 
-          output = (1.2572+(0.0826 * EPEXDAM)) * kWH / 100
+          output = (1.2572+(0.0826 * EPEXDAM)) * kWH / 100 * 1.06  
         } else if (as.ITime("07:00:00") <= as.ITime(tijd) & as.ITime(tijd) < as.ITime("11:00:00")){ 
-          output = (2.1872+(0.1056 * EPEXDAM)) * kWH / 100
+          output = (2.1872+(0.1056 * EPEXDAM)) * kWH / 100 * 1.06  
         } else if (as.ITime("11:00:00") <= as.ITime(tijd) & as.ITime(tijd) < as.ITime("17:00:00")){ 
-          output = (1.2572+(0.0826 * EPEXDAM)) * kWH / 100
-        } else { output = (1.2572+(0.0826 * EPEXDAM)) * kWH / 100      
+          output = (1.2572+(0.0826 * EPEXDAM)) * kWH / 100 * 1.06  
+        } else { output = (1.2572+(0.0826 * EPEXDAM)) * kWH / 100 * 1.06       
         }
       }
     } 
